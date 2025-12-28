@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member List - Dual Theme</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* ตัวแปรสีสำหรับโหมดสว่าง (Default) */
+        :root {
+            --bg-body: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+            --card-bg: #ffffff;
+            --primary: #ff2e63;
+            --secondary: #08d9d6;
+            --text-main: #252a34;
+            --text-dim: #6c757d;
+            --tab-bg: #ffffff;
+            --card-shadow: rgba(0,0,0,0.05);
+            --input-bg: #ffffff;
+        }
+
+        /* ตัวแปรสีสำหรับโหมดมืด */
+        [data-theme="dark"] {
+            --bg-body: radial-gradient(circle at 50% -15%, #1a1b3a 0%, #050505 85%);
+            --card-bg: #111111;
+            --primary: #6366f1;
+            --secondary: #00adb5;
+            --text-main: #ffffff;
+            --text-dim: #a0a0a0;
+            --tab-bg: #1a1a1a;
+            --card-shadow: rgba(0,0,0,0.4);
+            --input-bg: #1a1a1a;
+        }
+
+        body {
+            background: var(--bg-body);
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: 'Kanit', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            padding-bottom: 50px;
+            transition: all 0.3s ease;
+        }
+
+        header { text-align: center; padding: 70px 20px 20px; }
+        
+        h1 { 
+            font-family: 'Orbitron', sans-serif; 
+            font-size: clamp(2rem, 8vw, 4rem); 
+            margin: 0; 
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--text-main);
+        }
+
+        /* ปุ่มสลับโหมด (Theme Toggle) */
+        .theme-toggle {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 55px;
+            height: 55px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transition: 0.3s;
+            border: none;
+        }
+        .theme-toggle:hover { transform: scale(1.1) rotate(15deg); }
+
+        .admin-link {
+            position: absolute;
+            top: 20px; left: 20px;
+            background: var(--tab-bg);
+            color: var(--text-dim);
+            padding: 8px 18px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            box-shadow: var(--card-shadow);
+            transition: 0.3s;
+        }
+
+        /* Tabs เลือกแก๊ง */
+        .category-wrapper {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 30px auto;
+            flex-wrap: wrap;
+            padding: 0 20px;
+        }
+
+        .tab-btn {
+            background: var(--tab-bg);
+            border: 1px solid rgba(128,128,128,0.1);
+            color: var(--text-main);
+            padding: 10px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+            box-shadow: var(--card-shadow);
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Search */
+        .search-box { max-width: 500px; margin: 0 auto 40px; padding: 0 20px; }
+        .search-box input {
+            width: 100%;
+            padding: 15px 25px;
+            background: var(--input-bg);
+            border: 2px solid transparent;
+            border-radius: 50px;
+            color: var(--text-main);
+            outline: none;
+            box-shadow: var(--card-shadow);
+            transition: 0.3s;
+        }
+        .search-box input:focus { border-color: var(--secondary); }
+
+        /* การ์ดสมาชิก */
+        .member-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            transition: 0.3s;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(128,128,128,0.1);
+        }
+        .card:hover { transform: translateY(-5px); border-color: var(--secondary); }
+
+        .avatar {
+            width: 75px; height: 75px;
+            border-radius: 15px;
+            object-fit: cover;
+            margin-right: 15px;
+            border: 2px solid rgba(128,128,128,0.1);
+        }
+
+        .gang-tag {
+            font-size: 0.7rem;
+            color: var(--primary);
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .name { font-weight: 600; font-size: 1.2rem; }
+        .fb-text { color: var(--text-dim); font-size: 0.8rem; margin-bottom: 8px; display: block; }
+        
+        .badge {
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 0.65rem;
+            font-weight: bold;
+        }
+        .founder { background: #ffeaa7; color: #d63031; }
+        .member { background: rgba(128,128,128,0.1); color: var(--text-dim); }
+
+        .fb-btn {
+            width: 40px; height: 40px;
+            background: var(--secondary);
+            color: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            margin-left: auto;
+        }
+
+        #loader { text-align: center; color: var(--primary); margin-top: 50px; }
+    </style>
+</head>
+<body>
+
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <a href="https://docs.google.com/spreadsheets/d/1u34s5fH46Iq--VyXFh1rSpOMSSjKZg3CG2aFE1VYGPk/edit?gid=0#gid=0" target="_blank" class="admin-link">
+        <i class="fas fa-database"></i> Admin
+    </a>
+
+    <header>
+        <h1 id="headerTitle">Member List</h1>
+        <div style="color:var(--text-dim)">ROBLOXMAPKRADOT DIRECTORY</div>
+    </header>
+
+    <div class="category-wrapper" id="categoryTabs">
+        <button class="tab-btn active" onclick="filterByGang('ALL', this)">All</button>
+    </div>
+
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search..." onkeyup="handleSearch()">
+    </div>
+
+    <div id="loader">LOADING...</div>
+    <div class="member-grid" id="memberGrid"></div>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbyBS-OoHNS1EuoEHtFj90Pa2jN8bl2gED9lDSMN4iXtBOtG9eXpVBAo69hDXZIwlphliA/exec";
+        let allMembers = [];
+        let currentGang = 'ALL';
+
+        // ระบบเปลี่ยนธีม
+        function toggleTheme() {
+            const body = document.documentElement;
+            const currentTheme = body.getAttribute('data-theme');
+            const btn = document.getElementById('themeBtn');
+
+            if (currentTheme === 'dark') {
+                body.removeAttribute('data-theme');
+                btn.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                btn.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // เช็คธีมเก่าที่เคยเลือกไว้
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            document.getElementById('themeBtn').innerHTML = '<i class="fas fa-sun"></i>';
+        }
+
+        async function loadData() {
+            try {
+                const response = await fetch(API_URL);
+                allMembers = await response.json();
+                document.getElementById('loader').style.display = 'none';
+                generateGangTabs();
+                renderMembers(allMembers);
+            } catch (err) {
+                document.getElementById('loader').innerText = "ERROR!";
+            }
+        }
+
+        function generateGangTabs() {
+            const gangs = [...new Set(allMembers.map(m => m.gang))].filter(g => g);
+            const container = document.getElementById('categoryTabs');
+            gangs.forEach(gangName => {
+                const btn = document.createElement('button');
+                btn.className = 'tab-btn';
+                btn.innerText = gangName;
+                btn.onclick = (e) => filterByGang(gangName, e.target);
+                container.appendChild(btn);
+            });
+        }
+
+        function filterByGang(gang, btn) {
+            currentGang = gang;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            applyFilters();
+        }
+
+        function handleSearch() { applyFilters(); }
+
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = allMembers.filter(m => {
+                const matchGang = (currentGang === 'ALL' || m.gang === currentGang);
+                const matchSearch = m.name.toLowerCase().includes(searchTerm);
+                return matchGang && matchSearch;
+            });
+            renderMembers(filtered);
+        }
+
+        function renderMembers(data) {
+            const grid = document.getElementById('memberGrid');
+            grid.innerHTML = '';
+            data.forEach(m => {
+                const avatar = m.image_url || `https://ui-avatars.com/api/?name=${m.name}&background=random`;
+                grid.innerHTML += `
+                    <div class="card">
+                        <img src="${avatar}" class="avatar">
+                        <div class="info">
+                            <div class="gang-tag">${m.gang || ''}</div>
+                            <div class="name">${m.name}</div>
+                            <span class="fb-text">${m.fb_display || ''}</span>
+                            <span class="badge ${m.role?.toLowerCase() === 'founder' ? 'founder' : 'member'}">${m.role}</span>
+                        </div>
+                        <a href="${m.fb_link}" target="_blank" class="fb-btn"><i class="fab fa-facebook-f"></i></a>
+                    </div>
+                `;
+            });
+        }
+
+        loadData();
+    </script>
+</body>
+</html>
