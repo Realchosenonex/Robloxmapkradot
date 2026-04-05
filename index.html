@@ -7,142 +7,260 @@
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&family=Orbitron:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --bg-body: radial-gradient(circle at 50% -15%, #1a1b3a 0%, #050505 85%); --card-bg: #111111; --primary: #6366f1; --text-main: #ffffff; --text-dim: #a0a0a0; }
-        body { background: var(--bg-body); color: var(--text-main); font-family: 'Kanit', sans-serif; margin: 0; min-height: 100vh; padding-bottom: 50px; user-select: none; }
+        :root {
+            --bg-body: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+            --card-bg: #ffffff;
+            --primary: #ff2e63;
+            --secondary: #08d9d6;
+            --text-main: #252a34;
+            --text-dim: #6c757d;
+        }
+        [data-theme="dark"] {
+            --bg-body: radial-gradient(circle at 50% -15%, #1a1b3a 0%, #050505 85%);
+            --card-bg: #111111;
+            --primary: #6366f1;
+            --text-main: #ffffff;
+            --text-dim: #a0a0a0;
+        }
+        body { background: var(--bg-body); background-attachment: fixed; color: var(--text-main); font-family: 'Kanit', sans-serif; margin: 0; min-height: 100vh; padding-bottom: 50px; transition: 0.3s; user-select: none; }
+        
         header { text-align: center; padding: 80px 20px 40px; }
-        .main-title { font-family: 'Orbitron', sans-serif; font-size: clamp(2.5rem, 8vw, 4rem); margin: 0; text-transform: uppercase; letter-spacing: 4px; }
-        .admin-trigger { position: fixed; bottom: 25px; left: 25px; width: 45px; height: 45px; background: rgba(255,255,255,0.1); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; z-index: 1000; }
-        .modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 2000; align-items: center; justify-content: center; }
-        .login-card { background: var(--card-bg); padding: 30px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; border: 1px solid var(--primary); }
-        #adminPanel { display: none; background: var(--card-bg); max-width: 500px; margin: 0 auto 30px; padding: 25px; border-radius: 20px; border: 2px solid var(--primary); }
-        .admin-input { width: 100%; box-sizing: border-box; padding: 12px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #333; background: #000; color: #fff; font-family: 'Kanit'; }
-        .admin-btn { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; }
+        .main-title { font-family: 'Orbitron', sans-serif; font-size: clamp(2.5rem, 8vw, 4rem); margin: 0; color: var(--text-main); text-transform: uppercase; letter-spacing: 4px; text-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .sub-title { color: var(--text-dim); font-size: 1rem; letter-spacing: 2px; margin-top: 10px; font-weight: 300; }
+
+        .admin-trigger { position: fixed; bottom: 25px; left: 25px; width: 45px; height: 45px; background: rgba(0,0,0,0.05); color: var(--text-dim); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; z-index: 1000; transition: 0.3s; }
+        .admin-trigger:hover { background: var(--primary); color: white; }
+        .theme-toggle { position: fixed; bottom: 25px; right: 25px; width: 50px; height: 50px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+
+        /* --- NEW LOGIN MODAL UI --- */
+        .modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 2000; align-items: center; justify-content: center; }
+        .login-card { background: var(--card-bg); padding: 30px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.4); border: 2px solid var(--primary); animation: modalIn 0.3s ease-out; }
+        @keyframes modalIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .login-card h2 { margin-top: 0; color: var(--primary); font-family: 'Orbitron'; }
+        
+        /* --------------------------- */
+
+        #adminPanel { display: none; background: var(--card-bg); max-width: 500px; margin: 0 auto 30px; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border: 2px solid var(--primary); }
+        .admin-input { width: 100%; box-sizing: border-box; padding: 12px; margin-bottom: 10px; border-radius: 10px; border: 1px solid rgba(128,128,128,0.2); background: var(--card-bg); color: var(--text-main); font-family: 'Kanit'; }
+        .admin-btn { width: 100%; padding: 15px; background: var(--secondary); color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .admin-btn:hover { filter: brightness(1.1); transform: scale(1.02); }
+        
+        .category-wrapper { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; padding: 0 20px; }
+        .tab-btn { background: var(--card-bg); border: none; color: var(--text-main); padding: 10px 22px; border-radius: 50px; cursor: pointer; font-weight: 500; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .tab-btn.active { background: var(--primary); color: white; }
+
+        .search-box { max-width: 500px; margin: 0 auto 40px; padding: 0 20px; position: relative; }
+        .search-box input { width: 100%; box-sizing: border-box; padding: 15px 50px; border-radius: 50px; border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.05); font-family: 'Kanit'; outline: none; background: var(--card-bg); color: var(--text-main); }
+        .search-icon { position: absolute; left: 40px; top: 50%; transform: translateY(-50%); color: var(--text-dim); }
+
         .member-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-        .card { background: var(--card-bg); border-radius: 20px; padding: 20px; display: flex; align-items: center; border: 1px solid #222; position: relative; }
-        .avatar { width: 80px; height: 80px; border-radius: 15px; object-fit: cover; margin-right: 15px; background: #222; }
+        .card { background: var(--card-bg); border-radius: 20px; padding: 20px; display: flex; align-items: center; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border: 1px solid rgba(128,128,128,0.05); position: relative; transition: 0.3s; }
+        .avatar { width: 80px; height: 80px; border-radius: 15px; object-fit: cover; margin-right: 15px; background: #eee; border: 2px solid rgba(0,0,0,0.05); }
+        .info { flex: 1; }
+        .name { font-weight: 600; font-size: 1.2rem; }
+        .badge { padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 600; background: rgba(0,0,0,0.05); color: var(--text-dim); }
+        .badge.founder { background: rgba(255, 46, 99, 0.1); color: var(--primary); }
+
         .action-group { display: flex; flex-direction: column; gap: 6px; }
         .icon-btn { width: 35px; height: 35px; border-radius: 10px; display: none; align-items: center; justify-content: center; border: none; cursor: pointer; color: white; text-decoration: none; }
         .fb-link { background: #1877f2; display: flex; }
         .edit-btn { background: #f1c40f; }
         .del-btn { background: #ff4757; }
-        #loader { text-align: center; padding: 50px; font-size: 1.5rem; color: var(--primary); }
+        
+        #loader { text-align: center; padding: 50px; font-size: 2rem; color: var(--primary); }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
-    <button class="admin-trigger" onclick="openLogin()"><i class="fas fa-lock"></i></button>
+    <button class="admin-trigger" onclick="showLoginModal()"><i class="fas fa-lock"></i></button>
+    <button class="theme-toggle" id="themeBtn"><i class="fas fa-moon"></i></button>
 
     <div class="modal-overlay" id="loginModal">
         <div class="login-card">
-            <h2 style="font-family:'Orbitron'; color:var(--primary);">ADMIN LOGIN</h2>
-            <input type="password" id="passInput" class="admin-input" placeholder="กรอกรหัสผ่าน..." style="text-align:center;">
-            <button class="admin-btn" id="loginConfirmBtn" onclick="checkAuth()">ยืนยัน</button>
-            <button onclick="document.getElementById('loginModal').style.display='none'" style="background:none; border:none; color:var(--text-dim); margin-top:10px; cursor:pointer;">ยกเลิก</button>
+            <h2>ADMIN LOGIN</h2>
+            <p style="color:var(--text-dim); font-size: 0.9rem; margin-bottom: 20px;">กรุณาใส่รหัสผ่านเพื่อจัดการข้อมูล</p>
+            <input type="password" id="passInput" class="admin-input" placeholder="Password..." style="text-align: center;">
+            <button class="admin-btn" onclick="checkAuth()">เข้าสู่ระบบ</button>
+            <button onclick="hideLoginModal()" style="background:none; border:none; color:var(--text-dim); margin-top:15px; cursor:pointer; font-size: 0.8rem;">ยกเลิก</button>
         </div>
     </div>
 
-    <header><h1 class="main-title">Member List</h1></header>
+    <header>
+        <h1 class="main-title">Member List</h1>
+        <div class="sub-title">ROBLOXMAPKRADOT</div>
+    </header>
 
     <div id="adminPanel">
-        <div id="formTitle" style="font-weight:bold; color:var(--primary); margin-bottom:15px; text-align:center;">ADMIN PANEL</div>
-        <input type="text" id="addName" class="admin-input" placeholder="ชื่อเล่น">
-        <input type="text" id="addGang" class="admin-input" placeholder="แก๊ง">
+        <div id="formTitle" style="font-weight:bold; color:var(--primary); margin-bottom:15px; text-align:center;">เพิ่มชื่อใหม่</div>
+        <input type="text" id="addName" class="admin-input" placeholder="ชื่อเล่น (ต้องตรงถ้าจะแก้ไข)">
+        <input type="text" id="addGang" class="admin-input" placeholder="ชื่อแก๊ง">
         <input type="text" id="addRole" class="admin-input" placeholder="ตำแหน่ง">
-        <input type="text" id="addFbDisplay" class="admin-input" placeholder="ชื่อเฟส">
+        <input type="text" id="addFbDisplay" class="admin-input" placeholder="ชื่อเฟสโชว์">
         <input type="text" id="addFbLink" class="admin-input" placeholder="ลิงก์เฟส">
-        <input type="text" id="addImg" class="admin-input" placeholder="ลิงก์รูป">
+        <input type="text" id="addImg" class="admin-input" placeholder="ลิงก์รูปโปรไฟล์">
         <button class="admin-btn" onclick="saveData()" id="submitBtn">บันทึกข้อมูล</button>
+        <button onclick="resetForm()" id="cancelBtn" style="display:none; width:100%; background:none; border:none; color:var(--text-dim); margin-top:10px; cursor:pointer;">ยกเลิกการแก้ไข</button>
+    </div>
+
+    <div class="category-wrapper" id="categoryTabs"></div>
+    <div class="search-box">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" id="searchInput" placeholder="ค้นหาชื่อ หรือ แก๊ง...">
     </div>
 
     <div id="loader"><i class="fas fa-spinner fa-spin"></i></div>
     <div class="member-grid" id="memberGrid"></div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbxWpWXFH26mrxKDt17zGV62QtBziN8G4jt0GsHbXL6fxQBkOygFptorQQp2pTyOHQ40tw/exec";
-        let allMembers = [], adminPassword = "", isAdmin = false, isEdit = false;
+        // กัน F12 เหมือนเดิม
+        document.onkeydown = function(e) {
+            if (e.keyCode == 123) return false;
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
+        };
 
-        async function load() {
-            const res = await fetch(API_URL);
-            allMembers = await res.json();
-            document.getElementById('loader').style.display = 'none';
-            render(allMembers);
+        const API_URL = "https://script.google.com/macros/s/AKfycbymS52Y3P19-bRNOKt2McY1hzoycy8zq0YIdbWot0vaVm3njz1U9mjowrXWtgSKJCGVqw/exec";
+        let allMembers = [], currentGang = 'ALL', isAdmin = false, isEdit = false;
+
+        // ฟังก์ชันจัดการ Modal Login
+        function showLoginModal() {
+            if (isAdmin) { location.reload(); return; }
+            document.getElementById('loginModal').style.display = 'flex';
+            document.getElementById('passInput').focus();
         }
-
-        function openLogin() { document.getElementById('loginModal').style.display = 'flex'; }
-
-        // ฟังก์ชันเช็ครหัสผ่าน โดยส่งไปถาม Google Apps Script
-        async function checkAuth() {
-            const p = document.getElementById('passInput').value;
-            const btn = document.getElementById('loginConfirmBtn');
-            btn.innerText = "กำลังตรวจสอบ..."; btn.disabled = true;
-
-            // ลองส่งคำสั่งปลอมๆ ไปพร้อมรหัสผ่านเพื่อเช็คว่ารหัสถูกไหม
-            const res = await fetch(API_URL, { 
-                method: 'POST', 
-                body: JSON.stringify({ action: 'check', password: p }) 
-            });
-            const result = await res.json();
-
-            if(result.status !== "wrong_pass") {
-                isAdmin = true; adminPassword = p;
-                document.getElementById('loginModal').style.display = 'none';
+        function hideLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('passInput').value = '';
+        }
+        function checkAuth() {
+            const pass = document.getElementById('passInput').value;
+            if (pass === "admin123") {
+                isAdmin = true;
+                hideLoginModal();
                 document.getElementById('adminPanel').style.display = 'block';
+                document.querySelector('.admin-trigger').innerHTML = '<i class="fas fa-sign-out-alt"></i>';
                 render(allMembers);
-            } else { 
-                alert("รหัสผ่านไม่ถูกต้อง!"); 
-                btn.innerText = "ยืนยัน"; btn.disabled = false;
+                alert("ยินดีต้อนรับ Admin");
+            } else {
+                alert("รหัสผ่านไม่ถูกต้อง!");
             }
         }
+        // ให้กด Enter ในช่องรหัสผ่านได้
+        document.getElementById('passInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') checkAuth();
+        });
+
+        async function load() {
+            try {
+                const res = await fetch(API_URL);
+                allMembers = await res.json();
+                document.getElementById('loader').style.display = 'none';
+                renderTabs();
+                render(allMembers);
+            } catch (e) { document.getElementById('loader').innerText = "เชื่อมต่อล้มเหลว"; }
+        }
+
+        function renderTabs() {
+            const gangs = [...new Set(allMembers.map(m => m.gang))].filter(g => g);
+            const container = document.getElementById('categoryTabs');
+            container.innerHTML = `<button class="tab-btn active" onclick="filterGang('ALL', this)">ทั้งหมด</button>`;
+            gangs.forEach(g => {
+                container.innerHTML += `<button class="tab-btn" onclick="filterGang('${g}', this)">${g}</button>`;
+            });
+        }
+
+        window.filterGang = (gang, btn) => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentGang = gang;
+            applyFilters();
+        };
 
         function render(data) {
             const grid = document.getElementById('memberGrid');
             grid.innerHTML = '';
             data.forEach(m => {
+                const avatar = m.image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=random&color=fff`;
                 grid.innerHTML += `
                     <div class="card">
-                        <img src="${m.image_url || 'https://via.placeholder.com/80'}" class="avatar">
+                        <img src="${avatar}" class="avatar">
                         <div class="info">
-                            <div style="color:var(--primary); font-size:0.7rem;">${m.gang}</div>
-                            <div style="font-weight:600;">${m.name}</div>
-                            <div style="font-size:0.8rem; color:var(--text-dim);">${m.role}</div>
+                            <div style="color:var(--primary); font-size:0.75rem; font-weight:bold; text-transform:uppercase;">${m.gang || '-'}</div>
+                            <div class="name">${m.name}</div>
+                            <span class="badge ${m.role?.toLowerCase()==='founder'?'founder':''}">${m.role || 'Member'}</span>
                         </div>
                         <div class="action-group">
-                            <a href="${m.fb_link}" target="_blank" class="icon-btn fb-link" style="display:flex"><i class="fab fa-facebook-f"></i></a>
+                            ${m.fb_link ? `<a href="${m.fb_link}" target="_blank" class="icon-btn fb-link" style="display:flex"><i class="fab fa-facebook-f"></i></a>` : ''}
                             <button class="icon-btn edit-btn" onclick="edit('${m.name}')" style="display:${isAdmin?'flex':'none'}"><i class="fas fa-edit"></i></button>
                             <button class="icon-btn del-btn" onclick="del('${m.name}')" style="display:${isAdmin?'flex':'none'}"><i class="fas fa-trash"></i></button>
                         </div>
-                    </div>`;
+                    </div>
+                `;
             });
         }
 
         window.edit = (name) => {
             const m = allMembers.find(x => x.name === name);
             isEdit = true;
+            document.getElementById('formTitle').innerText = "📝 กำลังแก้ไข: " + name;
             document.getElementById('addName').value = m.name;
             document.getElementById('addGang').value = m.gang;
             document.getElementById('addRole').value = m.role;
             document.getElementById('addFbDisplay').value = m.fb_display;
             document.getElementById('addFbLink').value = m.fb_link;
             document.getElementById('addImg').value = m.image_url;
-            window.scrollTo(0,0);
+            document.getElementById('cancelBtn').style.display = "block";
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        };
+
+        window.resetForm = () => {
+            isEdit = false;
+            document.getElementById('formTitle').innerText = "เพิ่มชื่อใหม่";
+            document.getElementById('adminPanel').querySelectorAll('input').forEach(i => i.value = "");
+            document.getElementById('cancelBtn').style.display = "none";
         };
 
         window.saveData = async () => {
             const btn = document.getElementById('submitBtn');
             btn.innerText = "กำลังบันทึก..."; btn.disabled = true;
             const payload = {
-                action: isEdit ? 'edit' : 'add', password: adminPassword,
-                data: { name: document.getElementById('addName').value, gang: document.getElementById('addGang').value, role: document.getElementById('addRole').value, fb_display: document.getElementById('addFbDisplay').value, fb_link: document.getElementById('addFbLink').value, image_url: document.getElementById('addImg').value }
+                action: isEdit ? 'edit' : 'add',
+                data: {
+                    name: document.getElementById('addName').value,
+                    gang: document.getElementById('addGang').value,
+                    role: document.getElementById('addRole').value,
+                    fb_display: document.getElementById('addFbDisplay').value,
+                    fb_link: document.getElementById('addFbLink').value,
+                    image_url: document.getElementById('addImg').value
+                }
             };
             await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
             location.reload();
         };
 
-        window.del = async (n) => {
-            if(confirm("ลบรายชื่อนี้ใช่ไหม?")) {
-                await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'delete', name: n, password: adminPassword }) });
+        window.del = async (name) => {
+            if(confirm("ลบข้อมูลของ " + name + " ใช่ไหม?")) {
+                await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'delete', name: name }) });
                 location.reload();
             }
+        };
+
+        function applyFilters() {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = allMembers.filter(m => {
+                const matchGang = (currentGang === 'ALL' || m.gang === currentGang);
+                const matchSearch = m.name.toLowerCase().includes(term) || m.gang?.toLowerCase().includes(term);
+                return matchGang && matchSearch;
+            });
+            render(filtered);
+        }
+
+        document.getElementById('searchInput').oninput = applyFilters;
+        document.getElementById('themeBtn').onclick = () => {
+            const d = document.documentElement;
+            const isDark = d.getAttribute('data-theme') === 'dark';
+            d.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            document.getElementById('themeBtn').innerHTML = isDark ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
         };
 
         load();
