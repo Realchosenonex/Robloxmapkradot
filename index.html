@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Member List</title>
+    <title>Member List - Premium Directory</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&family=Orbitron:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        /* ตัวแปรสีสำหรับโหมดสว่าง (Default) */
+        /* --- Colors --- */
         :root {
             --bg-body: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
             --card-bg: #ffffff;
@@ -22,7 +22,6 @@
             --input-bg: #ffffff;
         }
 
-        /* ตัวแปรสีสำหรับโหมดมืด */
         [data-theme="dark"] {
             --bg-body: radial-gradient(circle at 50% -15%, #1a1b3a 0%, #050505 85%);
             --card-bg: #111111;
@@ -35,6 +34,7 @@
             --input-bg: #1a1a1a;
         }
 
+        /* --- Base --- */
         body {
             background: var(--bg-body);
             background-attachment: fixed;
@@ -44,6 +44,7 @@
             min-height: 100vh;
             padding-bottom: 50px;
             transition: all 0.3s ease;
+            user-select: none; /* กันคลุมดำก็อปปี้ข้อความ */
         }
 
         header { text-align: center; padding: 70px 20px 20px; }
@@ -55,9 +56,10 @@
             text-transform: uppercase;
             letter-spacing: 3px;
             color: var(--text-main);
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.1);
         }
 
-        /* ปุ่มสลับโหมด (Theme Toggle) */
+        /* --- UI Elements --- */
         .theme-toggle {
             position: fixed;
             bottom: 25px;
@@ -73,10 +75,11 @@
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             z-index: 1000;
-            transition: 0.3s;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s;
             border: none;
+            font-size: 1.2rem;
         }
-        .theme-toggle:hover { transform: scale(1.1) rotate(15deg); }
+        .theme-toggle:hover { transform: scale(1.15) rotate(15deg); }
 
         .admin-link {
             position: absolute;
@@ -89,9 +92,11 @@
             font-size: 0.8rem;
             box-shadow: var(--card-shadow);
             transition: 0.3s;
+            border: 1px solid rgba(128,128,128,0.1);
         }
+        .admin-link:hover { color: var(--primary); border-color: var(--primary); }
 
-        /* Tabs เลือกแก๊ง */
+        /* --- Tabs --- */
         .category-wrapper {
             display: flex;
             justify-content: center;
@@ -105,39 +110,49 @@
             background: var(--tab-bg);
             border: 1px solid rgba(128,128,128,0.1);
             color: var(--text-main);
-            padding: 10px 20px;
-            border-radius: 12px;
+            padding: 10px 24px;
+            border-radius: 50px;
             cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.3s;
             font-weight: 600;
             box-shadow: var(--card-shadow);
         }
-
         .tab-btn.active, .tab-btn:hover {
             background: var(--primary);
             color: white;
             border-color: var(--primary);
+            transform: translateY(-2px);
         }
 
-        /* Search */
-        .search-box { max-width: 500px; margin: 0 auto 40px; padding: 0 20px; }
+        /* --- Search --- */
+        .search-box { max-width: 500px; margin: 0 auto 40px; padding: 0 20px; position: relative; }
         .search-box input {
             width: 100%;
-            padding: 15px 25px;
+            box-sizing: border-box;
+            padding: 15px 25px 15px 45px;
             background: var(--input-bg);
-            border: 2px solid transparent;
+            border: 2px solid rgba(128,128,128,0.1);
             border-radius: 50px;
             color: var(--text-main);
             outline: none;
+            font-family: 'Kanit', sans-serif;
             box-shadow: var(--card-shadow);
             transition: 0.3s;
+            font-size: 1rem;
         }
-        .search-box input:focus { border-color: var(--secondary); }
+        .search-box input:focus { border-color: var(--secondary); box-shadow: 0 0 15px rgba(8, 217, 214, 0.2); }
+        .search-icon {
+            position: absolute;
+            left: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-dim);
+        }
 
-        /* การ์ดสมาชิก */
+        /* --- Grid & Cards --- */
         .member-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 20px;
             max-width: 1200px;
             margin: 0 auto;
@@ -150,11 +165,13 @@
             padding: 20px;
             display: flex;
             align-items: center;
-            transition: 0.3s;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             box-shadow: var(--card-shadow);
-            border: 1px solid rgba(128,128,128,0.1);
+            border: 1px solid rgba(128,128,128,0.05);
+            position: relative;
+            overflow: hidden;
         }
-        .card:hover { transform: translateY(-5px); border-color: var(--secondary); }
+        .card:hover { transform: translateY(-5px); border-color: var(--secondary); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
 
         .avatar {
             width: 75px; height: 75px;
@@ -162,46 +179,55 @@
             object-fit: cover;
             margin-right: 15px;
             border: 2px solid rgba(128,128,128,0.1);
+            background-color: var(--tab-bg);
         }
 
+        .info { flex: 1; }
         .gang-tag {
             font-size: 0.7rem;
             color: var(--primary);
             font-weight: 800;
             text-transform: uppercase;
             margin-bottom: 4px;
+            letter-spacing: 1px;
         }
-
-        .name { font-weight: 600; font-size: 1.2rem; }
+        .name { font-weight: 600; font-size: 1.2rem; margin-bottom: 2px; }
         .fb-text { color: var(--text-dim); font-size: 0.8rem; margin-bottom: 8px; display: block; }
         
         .badge {
-            padding: 3px 10px;
+            padding: 4px 10px;
             border-radius: 6px;
             font-size: 0.65rem;
             font-weight: bold;
+            display: inline-block;
         }
-        .founder { background: #ffeaa7; color: #d63031; }
+        .founder { background: rgba(255, 46, 99, 0.1); color: var(--primary); }
         .member { background: rgba(128,128,128,0.1); color: var(--text-dim); }
 
         .fb-btn {
-            width: 40px; height: 40px;
+            width: 42px; height: 42px;
             background: var(--secondary);
-            color: white;
+            color: #fff;
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             text-decoration: none;
-            margin-left: auto;
+            margin-left: 10px;
+            transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(8, 217, 214, 0.3);
         }
+        .fb-btn:hover { transform: scale(1.1); background: #06b5b2; }
 
-        #loader { text-align: center; color: var(--primary); margin-top: 50px; }
+        /* --- States --- */
+        .loader-container { text-align: center; color: var(--primary); margin-top: 50px; font-size: 1.5rem; }
+        .empty-state { text-align: center; grid-column: 1 / -1; color: var(--text-dim); padding: 40px; }
+        .empty-state i { font-size: 3rem; margin-bottom: 15px; opacity: 0.5; }
     </style>
 </head>
 <body>
 
-    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+    <button class="theme-toggle" id="themeBtn" aria-label="Toggle Theme">
         <i class="fas fa-moon"></i>
     </button>
 
@@ -211,48 +237,79 @@
 
     <header>
         <h1 id="headerTitle">Member List</h1>
-        <div style="color:var(--text-dim)">ROBLOXMAPKRADOT DIRECTORY</div>
+        <div style="color:var(--text-dim); font-weight: 300; margin-top: 5px; letter-spacing: 1px;">ROBLOXMAPKRADOT DIRECTORY</div>
     </header>
 
     <div class="category-wrapper" id="categoryTabs">
-        <button class="tab-btn active" onclick="filterByGang('ALL', this)">All</button>
-    </div>
+        </div>
 
     <div class="search-box">
-        <input type="text" id="searchInput" placeholder="Search..." onkeyup="handleSearch()">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" id="searchInput" placeholder="ค้นหาสมาชิก, แก๊ง, บทบาท...">
     </div>
 
-    <div id="loader">LOADING...</div>
+    <div id="loader" class="loader-container">
+        <i class="fas fa-circle-notch fa-spin"></i>
+        <div style="font-size: 1rem; margin-top: 10px;">กำลังโหลดข้อมูล...</div>
+    </div>
+    
     <div class="member-grid" id="memberGrid"></div>
 
     <script>
+        /* ========================================================
+           1. ระบบป้องกันพื้นฐาน (Anti-Inspect & DevTools) 
+           ======================================================== */
+        document.addEventListener('contextmenu', event => event.preventDefault()); // ปิดคลิกขวา
+        
+        document.addEventListener('keydown', event => {
+            // ปิด F12
+            if (event.key === 'F12' || event.keyCode === 123) {
+                event.preventDefault();
+                return false;
+            }
+            // ปิด Ctrl+Shift+I (Inspect) / Ctrl+Shift+J (Console) / Ctrl+U (View Source)
+            if (event.ctrlKey && event.shiftKey && (event.key === 'I' || event.key === 'i' || event.key === 'J' || event.key === 'j' || event.key === 'C' || event.key === 'c')) {
+                event.preventDefault();
+                return false;
+            }
+            if (event.ctrlKey && (event.key === 'U' || event.key === 'u')) {
+                event.preventDefault();
+                return false;
+            }
+        });
+
+        /* ========================================================
+           2. ระบบการทำงานหลัก (Main Logic) 
+           ======================================================== */
         const API_URL = "https://script.google.com/macros/s/AKfycbyBS-OoHNS1EuoEHtFj90Pa2jN8bl2gED9lDSMN4iXtBOtG9eXpVBAo69hDXZIwlphliA/exec";
         let allMembers = [];
         let currentGang = 'ALL';
 
-        // ระบบเปลี่ยนธีม
-        function toggleTheme() {
-            const body = document.documentElement;
-            const currentTheme = body.getAttribute('data-theme');
-            const btn = document.getElementById('themeBtn');
+        // --- Theme Manager ---
+        const themeBtn = document.getElementById('themeBtn');
+        const rootElement = document.documentElement;
 
-            if (currentTheme === 'dark') {
-                body.removeAttribute('data-theme');
-                btn.innerHTML = '<i class="fas fa-moon"></i>';
-                localStorage.setItem('theme', 'light');
-            } else {
-                body.setAttribute('data-theme', 'dark');
-                btn.innerHTML = '<i class="fas fa-sun"></i>';
-                localStorage.setItem('theme', 'dark');
+        function initTheme() {
+            if (localStorage.getItem('theme') === 'dark') {
+                rootElement.setAttribute('data-theme', 'dark');
+                themeBtn.innerHTML = '<i class="fas fa-sun"></i>';
             }
         }
 
-        // เช็คธีมเก่าที่เคยเลือกไว้
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            document.getElementById('themeBtn').innerHTML = '<i class="fas fa-sun"></i>';
-        }
+        themeBtn.addEventListener('click', () => {
+            const isDark = rootElement.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+                rootElement.removeAttribute('data-theme');
+                themeBtn.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('theme', 'light');
+            } else {
+                rootElement.setAttribute('data-theme', 'dark');
+                themeBtn.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('theme', 'dark');
+            }
+        });
 
+        // --- Data Loading ---
         async function loadData() {
             try {
                 const response = await fetch(API_URL);
@@ -261,63 +318,100 @@
                 generateGangTabs();
                 renderMembers(allMembers);
             } catch (err) {
-                document.getElementById('loader').innerText = "ERROR!";
+                document.getElementById('loader').innerHTML = `<i class="fas fa-exclamation-triangle" style="color: #ff2e63;"></i><div style="font-size: 1rem; margin-top: 10px; color: var(--text-main);">ไม่สามารถเชื่อมต่อฐานข้อมูลได้</div>`;
             }
         }
 
+        // --- UI Rendering ---
         function generateGangTabs() {
             const gangs = [...new Set(allMembers.map(m => m.gang))].filter(g => g);
             const container = document.getElementById('categoryTabs');
+            
+            // สร้างปุ่ม ALL
+            container.innerHTML = `<button class="tab-btn active" data-gang="ALL">ทั้งหมด</button>`;
+            
+            // สร้างปุ่มแก๊งอื่นๆ
             gangs.forEach(gangName => {
-                const btn = document.createElement('button');
-                btn.className = 'tab-btn';
-                btn.innerText = gangName;
-                btn.onclick = (e) => filterByGang(gangName, e.target);
-                container.appendChild(btn);
+                container.innerHTML += `<button class="tab-btn" data-gang="${gangName}">${gangName}</button>`;
             });
-        }
 
-        function filterByGang(gang, btn) {
-            currentGang = gang;
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            applyFilters();
-        }
-
-        function handleSearch() { applyFilters(); }
-
-        function applyFilters() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = allMembers.filter(m => {
-                const matchGang = (currentGang === 'ALL' || m.gang === currentGang);
-                const matchSearch = m.name.toLowerCase().includes(searchTerm);
-                return matchGang && matchSearch;
+            // ใส่ Event Listener ให้ปุ่ม
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    currentGang = e.target.getAttribute('data-gang');
+                    applyFilters();
+                });
             });
-            renderMembers(filtered);
         }
 
         function renderMembers(data) {
             const grid = document.getElementById('memberGrid');
             grid.innerHTML = '';
+
+            if (data.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-ghost"></i>
+                        <h2>ไม่พบข้อมูลที่คุณค้นหา</h2>
+                        <p>ลองเปลี่ยนคำค้นหาหรือเลือกแก๊งอื่นดูนะ</p>
+                    </div>`;
+                return;
+            }
+
             data.forEach(m => {
-                const avatar = m.image_url || `https://ui-avatars.com/api/?name=${m.name}&background=random`;
+                // ถ้าไม่มีรูป ใช้ ui-avatars สร้างรูปโปรไฟล์จากชื่อ
+                const avatar = m.image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=random&color=fff&size=150`;
+                const isFounder = m.role && m.role.toLowerCase() === 'founder';
+                
                 grid.innerHTML += `
                     <div class="card">
-                        <img src="${avatar}" class="avatar">
+                        <img src="${avatar}" class="avatar" loading="lazy" alt="Profile of ${m.name}">
                         <div class="info">
-                            <div class="gang-tag">${m.gang || ''}</div>
+                            <div class="gang-tag"><i class="fas fa-users" style="margin-right:4px;"></i>${m.gang || 'NO GANG'}</div>
                             <div class="name">${m.name}</div>
-                            <span class="fb-text">${m.fb_display || ''}</span>
-                            <span class="badge ${m.role?.toLowerCase() === 'founder' ? 'founder' : 'member'}">${m.role}</span>
+                            <span class="fb-text">${m.fb_display || '-'}</span>
+                            <span class="badge ${isFounder ? 'founder' : 'member'}">
+                                ${isFounder ? '<i class="fas fa-crown" style="margin-right:3px;"></i>' : ''}${m.role || 'Member'}
+                            </span>
                         </div>
-                        <a href="${m.fb_link}" target="_blank" class="fb-btn"><i class="fab fa-facebook-f"></i></a>
+                        ${m.fb_link ? `<a href="${m.fb_link}" target="_blank" class="fb-btn" aria-label="Facebook Profile"><i class="fab fa-facebook-f"></i></a>` : ''}
                     </div>
                 `;
             });
         }
 
+        // --- Search & Filter ---
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = allMembers.filter(m => {
+                const matchGang = (currentGang === 'ALL' || m.gang === currentGang);
+                // ค้นหาจากชื่อ, ชื่อเฟส หรือ บทบาท
+                const matchSearch = (m.name && m.name.toLowerCase().includes(searchTerm)) || 
+                                    (m.fb_display && m.fb_display.toLowerCase().includes(searchTerm)) ||
+                                    (m.role && m.role.toLowerCase().includes(searchTerm));
+                return matchGang && matchSearch;
+            });
+            renderMembers(filtered);
+        }
+
+        // --- ระบบ Debounce (หน่วงเวลาพิมพ์ ไม่ให้เว็บค้าง) ---
+        function debounce(func, delay) {
+            let timeoutId;
+            return function(...args) {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => { func.apply(this, args); }, delay);
+            };
+        }
+
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', debounce(() => applyFilters(), 300)); // หน่วงเวลา 300ms หลังพิมพ์เสร็จ
+
+        // --- Initialize ---
+        initTheme();
         loadData();
+
     </script>
 </body>
 </html>
-
