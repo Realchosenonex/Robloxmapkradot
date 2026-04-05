@@ -22,9 +22,8 @@
             --text-main: #ffffff;
             --text-dim: #a0a0a0;
         }
-        body { background: var(--bg-body); background-attachment: fixed; color: var(--text-main); font-family: 'Kanit', sans-serif; margin: 0; min-height: 100vh; padding-bottom: 50px; transition: 0.3s; }
+        body { background: var(--bg-body); background-attachment: fixed; color: var(--text-main); font-family: 'Kanit', sans-serif; margin: 0; min-height: 100vh; padding-bottom: 50px; transition: 0.3s; user-select: none; }
         
-        /* แก้ไขส่วนหัวข้อที่หายไป */
         header { text-align: center; padding: 80px 20px 40px; }
         .main-title { font-family: 'Orbitron', sans-serif; font-size: clamp(2.5rem, 8vw, 4rem); margin: 0; color: var(--text-main); text-transform: uppercase; letter-spacing: 4px; text-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .sub-title { color: var(--text-dim); font-size: 1rem; letter-spacing: 2px; margin-top: 10px; font-weight: 300; }
@@ -62,9 +61,7 @@
         #loader { text-align: center; padding: 50px; font-size: 2rem; color: var(--primary); }
     </style>
 </head>
-<body>
-
-    <button class="admin-trigger" onclick="handleAdmin()"><i class="fas fa-lock"></i></button>
+<body oncontextmenu="return false;"> <button class="admin-trigger" onclick="handleAdmin()"><i class="fas fa-lock"></i></button>
     <button class="theme-toggle" id="themeBtn"><i class="fas fa-moon"></i></button>
 
     <header>
@@ -74,9 +71,9 @@
 
     <div id="adminPanel">
         <div id="formTitle" style="font-weight:bold; color:var(--primary); margin-bottom:15px; text-align:center;">เพิ่มชื่อใหม่</div>
-        <input type="text" id="addName" class="admin-input" placeholder="ชื่อเล่น (ต้องเป๊ะถ้าจะแก้)">
+        <input type="text" id="addName" class="admin-input" placeholder="ชื่อเล่น (ต้องตรงถ้าจะแก้ไข)">
         <input type="text" id="addGang" class="admin-input" placeholder="ชื่อแก๊ง">
-        <input type="text" id="addRole" class="admin-input" placeholder="ตำแหน่ง (Founder/Member)">
+        <input type="text" id="addRole" class="admin-input" placeholder="ตำแหน่ง">
         <input type="text" id="addFbDisplay" class="admin-input" placeholder="ชื่อเฟสโชว์">
         <input type="text" id="addFbLink" class="admin-input" placeholder="ลิงก์เฟส">
         <input type="text" id="addImg" class="admin-input" placeholder="ลิงก์รูปโปรไฟล์">
@@ -94,6 +91,15 @@
     <div class="member-grid" id="memberGrid"></div>
 
     <script>
+        // ระบบกัน F12 และ Ctrl+Shift+I / Ctrl+U
+        document.onkeydown = function(e) {
+            if (e.keyCode == 123) return false; // F12
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false; // Ctrl+Shift+I
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false; // Ctrl+Shift+C
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false; // Ctrl+Shift+J
+            if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Ctrl+U
+        };
+
         const API_URL = "https://script.google.com/macros/s/AKfycbymS52Y3P19-bRNOKt2McY1hzoycy8zq0YIdbWot0vaVm3njz1U9mjowrXWtgSKJCGVqw/exec";
         let allMembers = [], currentGang = 'ALL', isAdmin = false, isEdit = false;
 
