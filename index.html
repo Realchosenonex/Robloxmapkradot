@@ -3,338 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Robloxmapkradot</title>
+    <title>Robloxmapkradot Directory</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&family=Orbitron:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
         :root {
-            --bg-body: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+            --bg-body: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             --card-bg: #ffffff;
             --primary: #ff2e63;
             --secondary: #08d9d6;
             --text-main: #252a34;
             --text-dim: #6c757d;
-            --tab-bg: #ffffff;
-            --card-shadow: rgba(0,0,0,0.05);
-            --input-bg: #ffffff;
+            --card-shadow: 0 10px 20px rgba(0,0,0,0.05);
             --danger: #ff4757;
             --success: #2ed573;
+            --warning: #f1c40f;
         }
 
         [data-theme="dark"] {
             --bg-body: radial-gradient(circle at 50% -15%, #1a1b3a 0%, #050505 85%);
-            --card-bg: #111111;
+            --card-bg: #1a1a1a;
             --primary: #6366f1;
-            --secondary: #00adb5;
             --text-main: #ffffff;
             --text-dim: #a0a0a0;
-            --tab-bg: #1a1a1a;
-            --card-shadow: rgba(0,0,0,0.4);
-            --input-bg: #1a1a1a;
+            --card-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        body {
-            background: var(--bg-body);
-            background-attachment: fixed;
-            color: var(--text-main);
-            font-family: 'Kanit', sans-serif;
-            margin: 0;
-            min-height: 100vh;
-            padding-bottom: 50px;
-            transition: all 0.3s ease;
-            user-select: none;
-        }
+        body { background: var(--bg-body); background-attachment: fixed; color: var(--text-main); font-family: 'Kanit', sans-serif; margin: 0; min-height: 100vh; padding-bottom: 50px; transition: 0.3s; user-select: none; }
+        header { text-align: center; padding: 60px 20px 30px; }
+        h1 { font-family: 'Orbitron', sans-serif; font-size: clamp(2rem, 6vw, 3.5rem); margin: 0; color: var(--text-main); letter-spacing: 2px; }
 
-        header { text-align: center; padding: 70px 20px 20px; }
-        
-        h1 { 
-            font-family: 'Orbitron', sans-serif; 
-            font-size: clamp(2rem, 8vw, 4rem); 
-            margin: 0; 
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            color: var(--text-main);
-            text-shadow: 2px 2px 10px rgba(0,0,0,0.1);
-        }
+        /* Admin Layout */
+        .admin-trigger { position: fixed; bottom: 20px; left: 20px; width: 45px; height: 45px; background: rgba(0,0,0,0.1); color: var(--text-dim); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; z-index: 1000; }
+        .theme-toggle { position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; border: none; }
 
-        .theme-toggle {
-            position: fixed; bottom: 25px; right: 25px;
-            width: 55px; height: 55px;
-            background: var(--primary); color: white;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            z-index: 1000; border: none; font-size: 1.2rem;
-            transition: 0.3s;
-        }
+        #adminPanel { display: none; background: var(--card-bg); max-width: 550px; margin: 0 auto 40px; padding: 30px; border-radius: 25px; box-shadow: var(--card-shadow); border: 2px solid var(--primary); }
+        .admin-input { width: 100%; box-sizing: border-box; padding: 12px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #ddd; font-family: 'Kanit'; }
+        .admin-btn { width: 100%; padding: 15px; background: var(--success); color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; }
+        .cancel-btn { width: 100%; padding: 8px; background: transparent; color: var(--text-dim); border: none; cursor: pointer; }
 
-        .admin-trigger {
-            position: fixed; bottom: 25px; left: 25px;
-            width: 40px; height: 40px;
-            background: transparent; color: var(--text-dim);
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; border: none; opacity: 0.3;
-            transition: 0.3s; z-index: 1000;
-        }
-        .admin-trigger:hover { opacity: 1; color: var(--primary); }
-
-        #adminPanel {
-            display: none; background: var(--card-bg);
-            max-width: 500px; margin: 0 auto 30px;
-            padding: 25px; border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            border: 2px solid var(--primary);
-            animation: slideDown 0.4s ease;
-        }
-        @keyframes slideDown { from { opacity:0; transform: translateY(-20px); } to { opacity:1; transform: translateY(0); } }
-        
-        .admin-title { font-weight: bold; color: var(--primary); margin-bottom: 15px; text-align: center; font-size: 1.2rem; }
-        .admin-input {
-            width: 100%; box-sizing: border-box; padding: 12px 15px; margin-bottom: 10px;
-            background: var(--input-bg); border: 1px solid rgba(128,128,128,0.2);
-            border-radius: 10px; color: var(--text-main); font-family: 'Kanit';
-        }
-        .admin-btn {
-            width: 100%; padding: 12px; background: var(--success); color: white;
-            border: none; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.3s;
-        }
-
-        .category-wrapper { display: flex; justify-content: center; gap: 10px; margin: 20px auto; flex-wrap: wrap; padding: 0 20px; }
-        .tab-btn {
-            background: var(--tab-bg); border: 1px solid rgba(128,128,128,0.1);
-            color: var(--text-main); padding: 10px 24px; border-radius: 50px;
-            cursor: pointer; font-weight: 600; box-shadow: var(--card-shadow); transition: 0.3s;
-        }
-        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        /* UI Elements */
+        .category-wrapper { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; padding: 0 20px; }
+        .tab-btn { background: var(--card-bg); border: none; color: var(--text-main); padding: 10px 20px; border-radius: 50px; cursor: pointer; box-shadow: var(--card-shadow); }
+        .tab-btn.active { background: var(--primary); color: white; }
 
         .search-box { max-width: 500px; margin: 0 auto 40px; padding: 0 20px; position: relative; }
-        .search-box input {
-            width: 100%; box-sizing: border-box; padding: 15px 25px 15px 45px;
-            background: var(--input-bg); border: 2px solid rgba(128,128,128,0.1);
-            border-radius: 50px; color: var(--text-main); outline: none; box-shadow: var(--card-shadow);
-            font-family: 'Kanit';
-        }
+        .search-box input { width: 100%; box-sizing: border-box; padding: 15px 50px; border-radius: 50px; border: none; box-shadow: var(--card-shadow); font-family: 'Kanit'; outline: none; }
         .search-icon { position: absolute; left: 40px; top: 50%; transform: translateY(-50%); color: var(--text-dim); }
 
         .member-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-        .card {
-            background: var(--card-bg); border-radius: 20px; padding: 20px;
-            display: flex; align-items: center; box-shadow: var(--card-shadow);
-            border: 1px solid rgba(128,128,128,0.05); position: relative;
-            transition: 0.3s;
-        }
-        .card:hover { transform: translateY(-5px); border-color: var(--secondary); }
-        
-        .avatar { width: 75px; height: 75px; border-radius: 15px; object-fit: cover; margin-right: 15px; border: 2px solid rgba(128,128,128,0.1); }
+        .card { background: var(--card-bg); border-radius: 20px; padding: 20px; display: flex; align-items: center; box-shadow: var(--card-shadow); position: relative; transition: 0.3s; }
+        .avatar { width: 80px; height: 80px; border-radius: 15px; object-fit: cover; margin-right: 18px; background: #eee; }
         .info { flex: 1; }
-        .gang-tag { font-size: 0.7rem; color: var(--primary); font-weight: 800; text-transform: uppercase; }
         .name { font-weight: 600; font-size: 1.2rem; }
-        .badge { padding: 4px 10px; border-radius: 6px; font-size: 0.65rem; font-weight: bold; background: rgba(128,128,128,0.1); color: var(--text-dim); }
+        .badge { padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 600; background: #eee; color: #666; }
         .badge.founder { background: rgba(255, 46, 99, 0.1); color: var(--primary); }
 
-        .action-group { display: flex; flex-direction: column; gap: 8px; margin-left: 10px; }
-        .fb-btn {
-            width: 40px; height: 40px; background: var(--secondary); color: #fff;
-            border-radius: 12px; display: flex; align-items: center; justify-content: center; text-decoration: none;
-            transition: 0.3s; box-shadow: 0 4px 10px rgba(8, 217, 214, 0.3);
-        }
+        .action-group { display: flex; flex-direction: column; gap: 5px; }
+        .icon-btn { width: 35px; height: 35px; border-radius: 10px; display: none; align-items: center; justify-content: center; border: none; cursor: pointer; color: white; text-decoration: none; }
+        .fb-link { background: var(--secondary); display: flex; }
+        .edit-btn { background: var(--warning); }
+        .del-btn { background: var(--danger); }
         
-        .del-btn {
-            width: 40px; height: 40px; background: var(--danger); color: #fff;
-            border-radius: 12px; display: none; align-items: center; justify-content: center; 
-            border: none; cursor: pointer; transition: 0.3s;
-        }
-        
-        .loader-container { text-align: center; color: var(--primary); margin-top: 50px; font-size: 1.5rem; }
+        #loader { text-align: center; font-size: 2rem; color: var(--primary); padding: 50px; }
     </style>
 </head>
 <body>
 
-    <button class="admin-trigger" onclick="handleAdminLogin()"><i class="fas fa-lock"></i></button>
+    <button class="admin-trigger" onclick="handleAdmin()"><i class="fas fa-lock"></i></button>
     <button class="theme-toggle" id="themeBtn"><i class="fas fa-moon"></i></button>
 
-    <header>
-        <h1>Member List</h1>
-        <div style="color:var(--text-dim); font-weight: 300; margin-top: 5px; letter-spacing: 1px;">ROBLOXMAPKRADOT</div>
-    </header>
+    <header><h1>ROBLOXMAPKRADOT</h1></header>
 
     <div id="adminPanel">
-        <div class="admin-title"><i class="fas fa-user-shield"></i> ระบบจัดการหลังบ้าน</div>
-        <input type="text" id="addName" class="admin-input" placeholder="ชื่อเล่นสมาชิก (จำเป็น)">
-        <input type="text" id="addGang" class="admin-input" placeholder="ชื่อแก๊ง">
-        <input type="text" id="addRole" class="admin-input" placeholder="ตำแหน่ง (Founder หรือ Member)">
-        <input type="text" id="addFbDisplay" class="admin-input" placeholder="ชื่อ Facebook ที่ใช้โชว์">
-        <input type="text" id="addFbLink" class="admin-input" placeholder="ลิงก์ Facebook (URL)">
-        <input type="text" id="addImg" class="admin-input" placeholder="ลิงก์รูปภาพโปรไฟล์ (เว้นว่างได้)">
-        <button class="admin-btn" onclick="addNewMember()" id="submitBtn"><i class="fas fa-save"></i> บันทึกข้อมูล</button>
+        <div id="formTitle" style="font-weight:bold; color:var(--primary); margin-bottom:15px; text-align:center;">เพิ่มชื่อใหม่</div>
+        <input type="text" id="addName" class="admin-input" placeholder="ชื่อเล่น (ต้องตรงหากต้องการแก้ไข)">
+        <input type="text" id="addGang" class="admin-input" placeholder="แก๊ง">
+        <input type="text" id="addRole" class="admin-input" placeholder="ตำแหน่ง (Founder/Member)">
+        <input type="text" id="addFbDisplay" class="admin-input" placeholder="ชื่อเฟสที่โชว์">
+        <input type="text" id="addFbLink" class="admin-input" placeholder="ลิงก์เฟส">
+        <input type="text" id="addImg" class="admin-input" placeholder="ลิงก์รูปโปรไฟล์">
+        <button class="admin-btn" onclick="saveData()" id="submitBtn">บันทึกข้อมูล</button>
+        <button class="cancel-btn" id="cancelBtn" style="display:none;" onclick="resetForm()">ยกเลิกการแก้ไข</button>
     </div>
 
     <div class="category-wrapper" id="categoryTabs"></div>
-
     <div class="search-box">
         <i class="fas fa-search search-icon"></i>
-        <input type="text" id="searchInput" placeholder="ค้นหาชื่อ, แก๊ง, หรือตำแหน่ง...">
+        <input type="text" id="searchInput" placeholder="ค้นหาชื่อ หรือ แก๊ง...">
     </div>
 
-    <div id="loader" class="loader-container">
-        <i class="fas fa-circle-notch fa-spin"></i>
-        <div style="font-size: 1rem; margin-top: 10px;">กำลังโหลดข้อมูลล่าสุด...</div>
-    </div>
-    
+    <div id="loader"><i class="fas fa-spinner fa-spin"></i></div>
     <div class="member-grid" id="memberGrid"></div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbwuRAtcjAPjKLGipZTICNmQm1EHBMdcEvbPPFNdmtUu4JP2HULzr4CfE62PuqNzVBTjyw/exec"; 
-        
-        let allMembers = [];
-        let currentGang = 'ALL';
-        let isAdminMode = false;
+        const API_URL = "https://script.google.com/macros/s/AKfycbymS52Y3P19-bRNOKt2McY1hzoycy8zq0YIdbWot0vaVm3njz1U9mjowrXWtgSKJCGVqw/exec";
+        let allMembers = [], currentGang = 'ALL', isAdmin = false, isEdit = false;
 
-        document.addEventListener('contextmenu', e => e.preventDefault());
-        document.addEventListener('keydown', e => {
-            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key.toUpperCase())) || (e.ctrlKey && e.key === 'u')) {
-                e.preventDefault(); return false;
-            }
-        });
-
-        function handleAdminLogin() {
-            if (isAdminMode) {
-                if(confirm("ต้องการออกจากโหมด Admin หรือไม่?")) location.reload();
-                return;
-            }
-            const pass = prompt("ใส่รหัสผ่านเพื่อจัดการข้อมูล:");
-            if (pass === "admin123") {
-                isAdminMode = true;
+        function handleAdmin() {
+            if (isAdmin) { location.reload(); return; }
+            if (prompt("ใส่รหัสผ่าน:") === "admin123") {
+                isAdmin = true;
                 document.getElementById('adminPanel').style.display = 'block';
-                alert("Login สำเร็จ! คุณสามารถเพิ่มหรือลบชื่อได้ทันที");
-                renderMembers(allMembers);
-            } else if (pass !== null) {
-                alert("รหัสผ่านผิด!");
+                render(allMembers);
             }
         }
 
-        async function loadData() {
-            document.getElementById('loader').style.display = 'block';
+        async function load() {
             try {
                 const res = await fetch(API_URL);
                 allMembers = await res.json();
                 document.getElementById('loader').style.display = 'none';
-                generateGangTabs();
-                applyFilters();
-            } catch (err) {
-                document.getElementById('loader').innerHTML = "เชื่อมต่อล้มเหลว ตรวจสอบการตั้งค่า API";
-            }
+                renderTabs();
+                render(allMembers);
+            } catch (e) { document.getElementById('loader').innerText = "เชื่อมต่อล้มเหลว"; }
         }
 
-        function generateGangTabs() {
+        function renderTabs() {
             const gangs = [...new Set(allMembers.map(m => m.gang))].filter(g => g);
             const container = document.getElementById('categoryTabs');
-            container.innerHTML = `<button class="tab-btn active" data-gang="ALL">ทั้งหมด</button>`;
+            container.innerHTML = `<button class="tab-btn active" onclick="filterGang('ALL', this)">ทั้งหมด</button>`;
             gangs.forEach(g => {
-                container.innerHTML += `<button class="tab-btn" data-gang="${g}">${g}</button>`;
-            });
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.onclick = (e) => {
-                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                    e.target.classList.add('active');
-                    currentGang = e.target.getAttribute('data-gang');
-                    applyFilters();
-                };
+                container.innerHTML += `<button class="tab-btn" onclick="filterGang('${g}', this)">${g}</button>`;
             });
         }
 
-        function renderMembers(data) {
+        window.filterGang = (gang, btn) => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentGang = gang;
+            applyFilters();
+        };
+
+        function render(data) {
             const grid = document.getElementById('memberGrid');
             grid.innerHTML = '';
-            
             data.forEach(m => {
-                const avatar = m.image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=random&color=fff`;
-                const isFounder = m.role?.toLowerCase() === 'founder';
-                
+                const avatar = m.image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}`;
                 grid.innerHTML += `
                     <div class="card">
                         <img src="${avatar}" class="avatar">
                         <div class="info">
-                            <div class="gang-tag">${m.gang || 'No Gang'}</div>
+                            <div style="color:var(--primary); font-size:0.7rem; font-weight:bold;">${m.gang || '-'}</div>
                             <div class="name">${m.name}</div>
-                            <div style="font-size:0.8rem; color:var(--text-dim); margin-bottom:5px;">${m.fb_display || '-'}</div>
-                            <span class="badge ${isFounder ? 'founder' : ''}">${m.role || 'Member'}</span>
+                            <span class="badge ${m.role?.toLowerCase()==='founder'?'founder':''}">${m.role || 'Member'}</span>
                         </div>
                         <div class="action-group">
-                            ${m.fb_link ? `<a href="${m.fb_link}" target="_blank" class="fb-btn"><i class="fab fa-facebook-f"></i></a>` : ''}
-                            <button class="del-btn" onclick="deleteMember('${m.name}')" style="display: ${isAdminMode ? 'flex' : 'none'}">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                            ${m.fb_link ? `<a href="${m.fb_link}" target="_blank" class="icon-btn fb-link" style="display:flex"><i class="fab fa-facebook-f"></i></a>` : ''}
+                            <button class="icon-btn edit-btn" onclick="edit('${m.name}')" style="display:${isAdmin?'flex':'none'}"><i class="fas fa-edit"></i></button>
+                            <button class="icon-btn del-btn" onclick="del('${m.name}')" style="display:${isAdmin?'flex':'none'}"><i class="fas fa-trash"></i></button>
                         </div>
                     </div>
                 `;
             });
         }
 
+        window.edit = (name) => {
+            const m = allMembers.find(x => x.name === name);
+            isEdit = true;
+            document.getElementById('formTitle').innerText = "แก้ไขข้อมูล: " + name;
+            document.getElementById('addName').value = m.name;
+            document.getElementById('addGang').value = m.gang;
+            document.getElementById('addRole').value = m.role;
+            document.getElementById('addFbDisplay').value = m.fb_display;
+            document.getElementById('addFbLink').value = m.fb_link;
+            document.getElementById('addImg').value = m.image_url;
+            document.getElementById('cancelBtn').style.display = "block";
+            window.scrollTo(0,0);
+        };
+
+        window.resetForm = () => {
+            isEdit = false;
+            document.getElementById('formTitle').innerText = "เพิ่มชื่อใหม่";
+            document.getElementById('adminPanel').querySelectorAll('input').forEach(i => i.value = "");
+            document.getElementById('cancelBtn').style.display = "none";
+        };
+
+        window.saveData = async () => {
+            const payload = {
+                action: isEdit ? 'edit' : 'add',
+                data: {
+                    name: document.getElementById('addName').value,
+                    gang: document.getElementById('addGang').value,
+                    role: document.getElementById('addRole').value,
+                    fb_display: document.getElementById('addFbDisplay').value,
+                    fb_link: document.getElementById('addFbLink').value,
+                    image_url: document.getElementById('addImg').value
+                }
+            };
+            await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+            location.reload();
+        };
+
+        window.del = async (name) => {
+            if(confirm("ลบไหม?")) {
+                await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'delete', name: name }) });
+                location.reload();
+            }
+        };
+
         function applyFilters() {
             const term = document.getElementById('searchInput').value.toLowerCase();
             const filtered = allMembers.filter(m => {
                 const matchGang = (currentGang === 'ALL' || m.gang === currentGang);
-                const matchSearch = m.name.toLowerCase().includes(term) || (m.gang && m.gang.toLowerCase().includes(term));
+                const matchSearch = m.name.toLowerCase().includes(term) || m.gang?.toLowerCase().includes(term);
                 return matchGang && matchSearch;
             });
-            renderMembers(filtered);
+            render(filtered);
         }
 
-        async function addNewMember() {
-            const name = document.getElementById('addName').value.trim();
-            if(!name) return alert("ต้องใส่ชื่อสมาชิกด้วยครับ");
-
-            const btn = document.getElementById('submitBtn');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังบันทึก...';
-            btn.disabled = true;
-
-            const payload = {
-                action: 'add',
-                data: {
-                    name: name,
-                    gang: document.getElementById('addGang').value.trim(),
-                    role: document.getElementById('addRole').value.trim(),
-                    fb_display: document.getElementById('addFbDisplay').value.trim(),
-                    fb_link: document.getElementById('addFbLink').value.trim(),
-                    image_url: document.getElementById('addImg').value.trim()
-                }
-            };
-
-            try {
-                await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
-                alert("เพิ่มข้อมูลสำเร็จ!");
-                location.reload();
-            } catch (e) { alert("เกิดข้อผิดพลาดในการส่งข้อมูล"); }
-        }
-
-        async function deleteMember(name) {
-            if(!confirm(`ยืนยันการลบชื่อ ${name} ?`)) return;
-            try {
-                await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'delete', name: name }) });
-                alert("ลบข้อมูลสำเร็จ!");
-                loadData();
-            } catch (e) { alert("ลบไม่สำเร็จ"); }
-        }
-
-        document.getElementById('searchInput').oninput = () => {
-            clearTimeout(window.searchTimer);
-            window.searchTimer = setTimeout(applyFilters, 300);
-        };
-
+        document.getElementById('searchInput').oninput = applyFilters;
         document.getElementById('themeBtn').onclick = () => {
-            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
-            localStorage.setItem('theme', isDark ? 'light' : 'dark');
-            document.getElementById('themeBtn').innerHTML = isDark ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+            const d = document.documentElement;
+            d.setAttribute('data-theme', d.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
         };
 
-        if(localStorage.getItem('theme') === 'dark') document.getElementById('themeBtn').click();
-
-        loadData();
+        load();
     </script>
 </body>
 </html>
