@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&family=Orbitron:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* CSS เดิมของคุณเป๊ะๆ ไม่เปลี่ยนแม้แต่จุดเดียว */
         :root { --bg-body: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%); --card-bg: #ffffff; --primary: #ff2e63; --secondary: #08d9d6; --text-main: #252a34; --text-dim: #6c757d; }
         [data-theme="dark"] { --bg-body: radial-gradient(circle at 50% -15%, #1a1b3a 0%, #050505 85%); --card-bg: #111111; --primary: #6366f1; --text-main: #ffffff; --text-dim: #a0a0a0; }
         body { background: var(--bg-body); background-attachment: fixed; color: var(--text-main); font-family: 'Kanit', sans-serif; margin: 0; min-height: 100vh; padding-bottom: 50px; transition: 0.3s; user-select: none; }
@@ -90,26 +89,43 @@
         const API_URL = "https://script.google.com/macros/s/AKfycbyV3AoGDetdOFDhJi_Ok1-eOACP1a_d7RNcWn0WEBrEj-QAhudKtL7eZEdegfCTM99Z/exec";
         let allMembers = [], currentGang = 'ALL', isAdmin = false, isEdit = false, adminPassword = "";
 
+        // เช็คสถานะ Admin อัตโนมัติจาก LocalStorage
+        function checkPersistentAdmin() {
+            const savedPass = localStorage.getItem('admin_secret');
+            if (savedPass) {
+                adminPassword = savedPass;
+                isAdmin = true;
+                document.getElementById('adminPanel').style.display = 'block';
+                document.querySelector('.admin-trigger').innerHTML = '<i class="fas fa-sign-out-alt"></i>';
+            }
+        }
+
         function showLoginModal() {
-            if (isAdmin) { location.reload(); return; }
+            if (isAdmin) { 
+                if(confirm("ต้องการออกจากระบบ Admin ใช่หรือไม่?")) {
+                    localStorage.removeItem('admin_secret');
+                    location.reload(); 
+                }
+                return; 
+            }
             document.getElementById('loginModal').style.display = 'flex';
             document.getElementById('passInput').focus();
         }
+
         function hideLoginModal() {
             document.getElementById('loginModal').style.display = 'none';
             document.getElementById('passInput').value = '';
         }
 
-        // ฟังก์ชันเช็ครหัสผ่าน (ส่งไปถามหลังบ้าน)
         async function checkAuth() {
             const pass = document.getElementById('passInput').value;
-            // ส่งคำสั่งปลอมไปเช็คว่ารหัสผ่านถูกไหม
             const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'check', password: pass }) });
             const result = await res.json();
 
             if (result.status !== "wrong_password") {
                 isAdmin = true;
-                adminPassword = pass; // เก็บไว้ใช้ส่งพร้อมข้อมูล
+                adminPassword = pass;
+                localStorage.setItem('admin_secret', pass); // บันทึกรหัสลงเครื่อง
                 hideLoginModal();
                 document.getElementById('adminPanel').style.display = 'block';
                 document.querySelector('.admin-trigger').innerHTML = '<i class="fas fa-sign-out-alt"></i>';
@@ -121,6 +137,7 @@
         }
 
         async function load() {
+            checkPersistentAdmin();
             try {
                 const res = await fetch(API_URL);
                 allMembers = await res.json();
@@ -171,7 +188,7 @@
             btn.innerText = "กำลังบันทึก..."; btn.disabled = true;
             const payload = {
                 action: isEdit ? 'edit' : 'add',
-                password: adminPassword, // ส่งรหัสไปด้วยทุกครั้ง
+                password: adminPassword,
                 data: {
                     name: document.getElementById('addName').value,
                     gang: document.getElementById('addGang').value,
@@ -192,7 +209,6 @@
             }
         };
 
-        // ฟังก์ชันเสริมอื่นๆ (Edit, Search, Theme) ใช้ตัวเดิมของคุณ
         window.edit = (name) => {
             const m = allMembers.find(x => x.name === name);
             isEdit = true;
@@ -206,12 +222,14 @@
             document.getElementById('cancelBtn').style.display = "block";
             window.scrollTo({top: 0, behavior: 'smooth'});
         };
+
         window.resetForm = () => {
             isEdit = false;
             document.getElementById('formTitle').innerText = "เพิ่มชื่อใหม่";
             document.getElementById('adminPanel').querySelectorAll('input').forEach(i => i.value = "");
             document.getElementById('cancelBtn').style.display = "none";
         };
+
         function applyFilters() {
             const term = document.getElementById('searchInput').value.toLowerCase();
             const filtered = allMembers.filter(m => {
@@ -221,6 +239,7 @@
             });
             render(filtered);
         }
+
         document.getElementById('searchInput').oninput = applyFilters;
         document.getElementById('themeBtn').onclick = () => {
             const d = document.documentElement;
@@ -228,6 +247,7 @@
             d.setAttribute('data-theme', isDark ? 'light' : 'dark');
             document.getElementById('themeBtn').innerHTML = isDark ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
         };
+
         document.getElementById('passInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') checkAuth(); });
         load();
     </script>
