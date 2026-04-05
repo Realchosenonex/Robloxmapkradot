@@ -89,7 +89,6 @@
         const API_URL = "https://script.google.com/macros/s/AKfycbyV3AoGDetdOFDhJi_Ok1-eOACP1a_d7RNcWn0WEBrEj-QAhudKtL7eZEdegfCTM99Z/exec";
         let allMembers = [], currentGang = 'ALL', isAdmin = false, isEdit = false, adminPassword = "";
 
-        // เช็คสถานะ Admin อัตโนมัติจาก LocalStorage
         function checkPersistentAdmin() {
             const savedPass = localStorage.getItem('admin_secret');
             if (savedPass) {
@@ -125,7 +124,7 @@
             if (result.status !== "wrong_password") {
                 isAdmin = true;
                 adminPassword = pass;
-                localStorage.setItem('admin_secret', pass); // บันทึกรหัสลงเครื่อง
+                localStorage.setItem('admin_secret', pass);
                 hideLoginModal();
                 document.getElementById('adminPanel').style.display = 'block';
                 document.querySelector('.admin-trigger').innerHTML = '<i class="fas fa-sign-out-alt"></i>';
@@ -140,7 +139,17 @@
             checkPersistentAdmin();
             try {
                 const res = await fetch(API_URL);
-                allMembers = await res.json();
+                let rawData = await res.json();
+                
+                // จัดเรียง: ถ้าเป็น Founder ให้ขึ้นก่อน (เช็คตัวเล็กตัวใหญ่ได้)
+                allMembers = rawData.sort((a, b) => {
+                    const roleA = (a.role || "").toLowerCase();
+                    const roleB = (b.role || "").toLowerCase();
+                    if (roleA === 'founder' && roleB !== 'founder') return -1;
+                    if (roleA !== 'founder' && roleB === 'founder') return 1;
+                    return 0;
+                });
+
                 document.getElementById('loader').style.display = 'none';
                 renderTabs();
                 render(allMembers);
